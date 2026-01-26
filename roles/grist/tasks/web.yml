@@ -5,15 +5,15 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: "{{ app.name }}-web"
+        name: "{{ app.name }}-grist"
         namespace: "{{ inventory_hostname }}"
         labels:
           app.kubernetes.io/name: "{{ app.name }}"
-          app.kubernetes.io/component: web
+          app.kubernetes.io/component: grist
       spec:
         selector:
           app.kubernetes.io/name: "{{ app.name }}"
-          app.kubernetes.io/component: web
+          app.kubernetes.io/component: grist
         ports:
           - name: http
             protocol: TCP
@@ -26,17 +26,17 @@
       apiVersion: route.openshift.io/v1
       kind: Route
       metadata:
-        name: "{{ app.name }}-web"
+        name: "{{ app.name }}-grist"
         namespace: "{{ inventory_hostname }}"
         labels:
           app.kubernetes.io/name: "{{ app.name }}"
-          app.kubernetes.io/component: web
+          app.kubernetes.io/component: grist
           route: private
       spec:
         host: "{{ app.domain }}"
         to:
           kind: Service
-          name: "{{ app.name }}-web"
+          name: "{{ app.name }}-grist"
         port:
           targetPort: http
         tls:
@@ -80,7 +80,7 @@
                     name: http
                 envFrom:
                   - secretRef:
-                      name: "grist-secrets"
+                      name: "{{ app.name }}-grist-secrets"
                 resources:
                   requests:
                     cpu: "{{ resources.grist.requests.cpu }}"

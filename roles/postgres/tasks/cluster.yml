@@ -42,7 +42,7 @@
               login: true
               superuser: false
               passwordSecret:
-                name: "grist-db-credentials"
+                name: "{{ app.name }}-grist-db-credentials"
 
 - name: Create database
   kubernetes.core.k8s:
