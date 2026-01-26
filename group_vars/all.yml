@@ -2,7 +2,7 @@ _secrets_file: "{{ lookup('pipe', 'keybase fs read /keybase/team/epfl_declprofs/
 secrets: "{{ _secrets_file[env] }}"
 
 app:
-  name: declprof
+  name: declprofs
   url: "https://declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
   domain: "declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
 
