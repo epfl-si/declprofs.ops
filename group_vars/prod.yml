@@ -1,0 +1,26 @@
+resources:
+  grist:
+    storage: 5Gi
+    replicas: 2
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      memory: 256Mi
+
+  redis:
+    storage: 2Gi
+    requests:
+      cpu: 10m
+      memory: 100Mi
+    limits:
+      memory: 100Mi
+
+  database:
+    storage: 10Gi
+    replicas: 3
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 256Mi

@@ -1,0 +1,29 @@
+_secrets_file: "{{ lookup('pipe', 'keybase fs read /keybase/team/epfl_declprofs/secrets.yml') | from_yaml }}"
+secrets: "{{ _secrets_file[env] }}"
+
+app:
+  name: declprof
+  url: "https://declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
+  domain: "declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
+
+registry: quay-its.epfl.ch/svc0723
+pull_secret: svc0723-pull-secret
+
+images:
+  grist:
+    version: "1.7.10"
+  redis:
+    version: "8.4.0"
+
+database:
+  cluster: "{{ app.name }}-postgres"
+  grist:
+    name: "grist-db"
+    user: "grist-user"
+  n8n:
+    name: "n8n-db"
+    user: "n8n-user"
+  host: "{{ app.name }}-postgres-rw"
+
+storage_class:
+  name: ocs-storagecluster-cephfs
