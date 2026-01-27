@@ -71,6 +71,51 @@
               app.kubernetes.io/name: "{{ app.name }}"
               app.kubernetes.io/component: grist
           spec:
+            initContainers:
+              - name: patch-grist-js
+                image: "{{ registry }}/grist:{{ images.grist.version }}"
+                resources:
+                  requests:
+                    cpu: 10m
+                    memory: 250Mi
+                  limits:
+                    memory: 350Mi
+                command: ['sh', '-c']
+                args:
+                  - |
+                    set -e
+                    
+                    echo "========================================="
+                    echo "Copying /grist/_build to writable volume"
+                    echo "========================================="
+                    cp -r /grist/_build/* /patched-build/
+                    
+                    echo ""
+                    echo "========================================="
+                    echo "Patching ICreate.js"
+                    echo "========================================="
+                    cd /patched-build/app/server/lib
+                    
+                    if [ ! -f "ICreate.js" ]; then
+                      echo "ERROR: ICreate.js not found!"
+                      exit 1
+                    fi
+                    
+                    echo "BEFORE patch:"
+                    grep -A3 -B3 "custom.css" ICreate.js || true
+                    
+                    # Patch: ajouter le script AVANT la ligne custom.css
+                    sed -i "/elements.push('<link id=\"grist-custom-css\"/i\\            elements.push('<script src=\"conditional-css.js\"><\/script>');" ICreate.js
+                    
+                    echo ""
+                    echo "AFTER patch:"
+                    grep -A7 -B5 "custom.css" ICreate.js || true
+                    
+                    echo ""
+                    echo "✓ Patch completed successfully"
+                volumeMounts:
+                  - name: patched-build
+                    mountPath: /patched-build
             containers:
               - name: grist
                 image: "{{ registry }}/grist:{{ images.grist.version }}"
@@ -100,9 +145,168 @@
                 volumeMounts:
                   - name: data
                     mountPath: /persist
+                  - name: patched-build
+                    mountPath: /grist/_build
+                  - name: custom-css
+                    mountPath: /grist/static/custom.css
+                    subPath: custom.css
+                  - name: conditional-css-js
+                    mountPath: /grist/static/conditional-css.js
+                    subPath: conditional-css.js                  
             volumes:
               - name: data
                 persistentVolumeClaim:
                   claimName: "{{ app.name }}-grist-storage"
+              - name: patched-build
+                emptyDir: {}
+              - name: custom-css
+                configMap:
+                  name: "{{ app.name }}-custom-css"
+              - name: conditional-css-js
+                configMap:
+                  name: "{{ app.name }}-conditional-css-js"
             imagePullSecrets:
               - name: "{{ pull_secret }}"
+
+- name: Create config map custom-css
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: "{{ inventory_hostname }}"
+        name: "{{ app.name }}-custom-css"
+      data:
+        custom.css: |
+
+          nav[aria-labelledby="grist-tools-heading"] {
+          display: none !important;
+          }
+
+          .test-dp-add-new,
+          button.test-dp-add-new {
+          display: none !important;
+          }
+
+          div:has(> .test-bc-home) {
+            display: none !important;
+          }
+
+          .test-bc-home,
+          .test-bc-workspace,
+          .test-bc-workspace-ns,
+          .test-bc-doc,
+          .test-bc-page,
+          .test-bc-separator {
+            display: none !important;
+          }
+
+
+          .test-dm-logo,
+          ._cssAppLogo {
+            background-image: url('https://www.epfl.ch/wp-content/themes/wp-theme-2018/assets/svg/epfl-logo.svg') !important;
+            background-color: #f7f7f7 !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            width: 120px !important;
+            height: 40px !important;
+            min-width: 120px !important;
+          }
+
+          ._cssOrg .test-dm-orgname {
+          display: none;
+          background: #f7f7f7 !important;
+          background-color: #f7f7f7 !important;
+          }
+
+          ._cssOrg {
+          pointer-events: none;   
+          cursor: default;
+          background-color: #f7f7f7 !important;
+          }
+
+
+          ._cssOrg ._grain543_,
+          ._cssOrg ._grain544_ {
+          display: none;
+          background-color: #f7f7f7 !important;
+          }
+
+          ._cssOrg:hover,
+          ._cssOrg:active,
+          ._cssOrg:focus {
+          background: #f7f7f7 !important;
+          background-color: #f7f7f7 !important;
+          }
+
+- name: Create config map conditional-css-js
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: "{{ inventory_hostname }}"
+        name: "{{ app.name }}-conditional-css-js"
+      data: 
+        conditional-css.js: |
+
+          (function() {
+            console.log('✓ conditional-css.js loaded');
+            
+            function disableCustomCSS() {
+              console.log('→ Disabling custom CSS...');
+              
+              const customCss = document.getElementById('grist-custom-css');
+              if (customCss) {
+                customCss.disabled = true;
+                customCss.remove();
+                console.log('  ✓ Custom CSS removed');
+              } else {
+                console.log('  ⚠ Custom CSS not found (yet)');
+              }
+              
+              if (document.body) {
+                document.body.classList.add('show-all');
+                console.log('  ✓ Added show-all class to body');
+              }
+            }
+            
+            function checkAndApply() {
+              const hostname = window.location.hostname;
+              const urlParams = new URLSearchParams(window.location.search);
+              
+              const shouldShowAll = 
+                hostname.includes('admin') || 
+                urlParams.get('showall') === '1';
+              
+              if (shouldShowAll) {
+                console.log('→ Show All mode activated');
+                disableCustomCSS();
+              } else {
+                console.log('→ Normal mode - Custom CSS active');
+              }
+            }
+            
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', checkAndApply);
+              console.log('  ⏳ Waiting for DOM to load...');
+            } else {
+              checkAndApply();
+            }
+            
+            window.addEventListener('load', function() {
+              let lastUrl = location.href;
+              new MutationObserver(function() {
+                const url = location.href;
+                if (url !== lastUrl) {
+                  lastUrl = url;
+                  console.log('→ URL changed, re-checking...');
+                  checkAndApply();
+                }
+              }).observe(document.body, {subtree: true, childList: true});
+            });
+            
+          })();
