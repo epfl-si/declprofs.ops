@@ -6,7 +6,7 @@ app:
   url: "https://declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
   domain: "declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
 
-app-n8n:
+n8n:
   name: declprofs-n8n
   url: "https://declprofs-n8n{{ '-test' if env == 'test' else '' }}.epfl.ch"
   domain: "declprofs-n8n{{ '-test' if env == 'test' else '' }}.epfl.ch"

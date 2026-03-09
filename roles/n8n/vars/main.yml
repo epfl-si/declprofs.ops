@@ -1,9 +1,9 @@
-image: quay-its.epfl.ch/svc0176/n8n
+image: quay-its.epfl.ch/svc0723/n8n
 version: 1.112.3
 app: n8n
 subdomain: n8n
 secrets: "{{ lookup('pipe', 'keybase fs read /keybase/team/epfl_declprofs/secrets.yml') | from_yaml }}"
-domain: fsd.epfl.ch
+domain: declprofs-n8n.epfl.ch
 
 postgres_cluster:
   name: postgres-cluster
