@@ -27,7 +27,7 @@
           app: "{{ n8n.name }}"
           route: public-cf
       spec:
-        host: "{{ subdomain }}{% if env == 'test' %}-test{% endif %}.{{ domain }}"
+        host: "{{ n8n.domain }}"
         to:
           kind: Service
           name: "{{ n8n.name }}"
