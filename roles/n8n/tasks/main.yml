@@ -5,13 +5,6 @@
       tags: [n8n.secrets]
   tags: [n8n.secrets]
 
-- name: Ensure PostgreSQL Database
-  include_tasks:
-    file: postgres.yml
-    apply:
-      tags: [n8n.postgres]
-  tags: [n8n.postgres]
-
 - name: Deploy Web Application
   include_tasks:
     file: web.yml

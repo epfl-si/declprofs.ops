@@ -6,12 +6,19 @@ app:
   url: "https://declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
   domain: "declprofs-next{{ '-test' if env == 'test' else '' }}.epfl.ch"
 
+app-n8n:
+  name: declprofs-n8n
+  url: "https://declprofs-n8n{{ '-test' if env == 'test' else '' }}.epfl.ch"
+  domain: "declprofs-n8n{{ '-test' if env == 'test' else '' }}.epfl.ch"
+
 registry: quay-its.epfl.ch/svc0723
 pull_secret: svc0723-pull-secret
 
 images:
   grist:
     version: "1.7.10"
+  n8n:
+    version: "2.11.2"
   redis:
     version: "8.4.0"
 

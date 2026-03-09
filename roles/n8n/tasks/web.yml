@@ -4,13 +4,13 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: "{{ app }}-n8n"
+        name: "{{ app-n8n.name }}"
         namespace: "{{ inventory_hostname }}"
       spec:
         selector:
-          app: "{{ app }}"
+          app: "{{ app-n8n.name }}"
         ports:
-          - name: "{{ app }}-svc-port"
+          - name: "{{ app-n8n.name }}-svc-port"
             protocol: TCP
             port: 80
             targetPort: http
@@ -21,18 +21,18 @@
       apiVersion: route.openshift.io/v1
       kind: Route
       metadata:
-        name: "{{ app }}-n8n"
+        name: "{{ app-n8n.name }}"
         namespace: "{{ inventory_hostname }}"
         labels:
-          app: "{{ app }}"
+          app: "{{ app-n8n.name }}"
           route: public-cf
       spec:
-        host: "{{ subdomain }}{% if openshift_env == 'test' %}-test{% endif %}.{{ domain }}"
+        host: "{{ subdomain }}{% if env == 'test' %}-test{% endif %}.{{ domain }}"
         to:
           kind: Service
-          name: "{{ app }}"
+          name: "{{ app-n8n.name }}"
         port:
-          targetPort: "{{ app }}-svc-port"
+          targetPort: "{{ app-n8n.name }}-svc-port"
         tls:
           termination: edge
           insecureEdgeTerminationPolicy: Redirect
@@ -43,7 +43,7 @@
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: "{{ app }}-n8n"
+        name: "{{ app-n8n.name }}"
         namespace: "{{ inventory_hostname }}"
       spec:
         replicas: 1
@@ -53,22 +53,22 @@
             maxUnavailable: 1
         selector:
           matchLabels:
-            app: "{{ app }}"
+            app: "{{ app-n8n.name }}"
         template:
           metadata:
             labels:
-              app: "{{ app }}"
+              app: "{{ app-n8n.name }}"
           spec:
             containers:
-              - image: "{{ image }}:{{ version }}"
+              - image: "{{ registry }}/n8n:{{ images.n8n.version }}"
                 imagePullPolicy: Always
-                name: "{{ app }}"
+                name: "{{ app-n8n.name }}"
                 ports:
                   - containerPort: 5678
                     name: http
                 envFrom:
                   - secretRef:
-                      name: "{{ app }}-secrets"
+                      name: "{{ app-n8n.name }}-secrets"
                 resources:
                   requests:
                     cpu: 50m
@@ -92,4 +92,4 @@
               - name: data
                 emptyDir: {}
             imagePullSecrets:
-              - name: svc0176-pull-secret
+              - name: "{{ pull_secret }}"
