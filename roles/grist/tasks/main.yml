@@ -3,19 +3,19 @@
   ansible.builtin.include_tasks:
     file: secrets.yml
     apply:
-      tags: [outline.secrets]
-  tags: [outline.secrets]
+      tags: [grist.secrets]
+  tags: [grist.secrets]
 
 - name: Deploy storage
   ansible.builtin.include_tasks:
     file: storage.yml
     apply:
-      tags: [outline.storage]
-  tags: [outline.storage]
+      tags: [grist.storage]
+  tags: [grist.storage]
 
 - name: Deploy web application
   ansible.builtin.include_tasks:
     file: web.yml
     apply:
-      tags: [outline.web]
-  tags: [outline.web]
+      tags: [grist.web]
+  tags: [grist.web]
