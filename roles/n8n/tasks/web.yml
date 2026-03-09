@@ -25,7 +25,7 @@
         namespace: "{{ inventory_hostname }}"
         labels:
           app: "{{ n8n.name }}"
-          route: public-cf
+          route: private
       spec:
         host: "{{ n8n.domain }}"
         to:
