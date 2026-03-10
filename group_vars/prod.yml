@@ -8,6 +8,14 @@ resources:
     limits:
       memory: 256Mi
 
+  n8n:
+    replicas: 2
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 256Mi
+
   redis:
     storage: 2Gi
     requests:

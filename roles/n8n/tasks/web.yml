@@ -46,7 +46,7 @@
         name: "{{ n8n.name }}"
         namespace: "{{ inventory_hostname }}"
       spec:
-        replicas: 1
+        replicas: "{{ resources.n8n.replicas }}"
         strategy:
           type: RollingUpdate
           rollingUpdate:
@@ -71,10 +71,10 @@
                       name: "{{ n8n.name }}-secrets"
                 resources:
                   requests:
-                    cpu: 50m
-                    memory: 128Mi
+                    cpu: "{{ resources.n8n.requests.cpu }}"
+                    memory: "{{ resources.n8n.requests.cpu }}"
                   limits:
-                    memory: 512Mi
+                    memory: "{{ resources.n8n.requests.cpu }}"
                 readinessProbe:
                   tcpSocket:
                     port: 5678
