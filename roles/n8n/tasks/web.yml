@@ -74,18 +74,23 @@
                     cpu: "{{ resources.n8n.requests.cpu }}"
                     memory: "{{ resources.n8n.requests.memory }}"
                   limits:
-                    cpu: "{{ resources.n8n.limits.cpu }}"
+                    # cpu: "{{ resources.n8n.limits.cpu }}"
                     memory: "{{ resources.n8n.limits.memory }}"
-                readinessProbe:
-                  tcpSocket:
-                    port: 5678
-                  initialDelaySeconds: 5
-                  timeoutSeconds: 3
-                livenessProbe:
-                  tcpSocket:
-                    port: 5678
-                  initialDelaySeconds: 5
-                  timeoutSeconds: 3
+                # startupProbe:
+                #   tcpSocket:
+                #     port: 5678
+                #   periodSeconds: 3
+                #   failureThreshold: 30
+                # readinessProbe:
+                #   tcpSocket:
+                #     port: 5678
+                #   initialDelaySeconds: 5
+                #   timeoutSeconds: 3
+                # livenessProbe:
+                #   tcpSocket:
+                #     port: 5678
+                #   initialDelaySeconds: 5
+                #   timeoutSeconds: 3
                 volumeMounts:
                   - name: data
                     mountPath: /home/node
