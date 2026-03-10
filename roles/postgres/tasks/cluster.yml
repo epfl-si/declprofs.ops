@@ -43,6 +43,12 @@
               superuser: false
               passwordSecret:
                 name: "{{ app.name }}-grist-db-credentials"
+            - name: "{{ database.n8n.user }}"
+              ensure: present
+              login: true
+              superuser: false
+              passwordSecret:
+                name: "{{ n8n.name }}-db-credentials"
 
 - name: Create database
   kubernetes.core.k8s:
