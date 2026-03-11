@@ -16,3 +16,9 @@
   roles:
     - grist
   tags: [grist]
+ 
+- name: Deploy n8n
+  hosts: all
+  roles:
+    - n8n
+  tags: [n8n]
