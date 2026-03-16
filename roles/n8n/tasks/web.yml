@@ -59,6 +59,9 @@
             labels:
               app: "{{ n8n.name }}"
           spec:
+            # securityContext:
+            #   runAsNonRoot: true
+            #   fsGroup: 1000
             containers:
               - image: "{{ registry }}/n8n:{{ images.n8n.version }}"
                 imagePullPolicy: Always
@@ -74,23 +77,25 @@
                     cpu: "{{ resources.n8n.requests.cpu }}"
                     memory: "{{ resources.n8n.requests.memory }}"
                   limits:
-                    # cpu: "{{ resources.n8n.limits.cpu }}"
                     memory: "{{ resources.n8n.limits.memory }}"
-                # startupProbe:
-                #   tcpSocket:
-                #     port: 5678
-                #   periodSeconds: 3
-                #   failureThreshold: 30
-                # readinessProbe:
-                #   tcpSocket:
-                #     port: 5678
-                #   initialDelaySeconds: 5
-                #   timeoutSeconds: 3
-                # livenessProbe:
-                #   tcpSocket:
-                #     port: 5678
-                #   initialDelaySeconds: 5
-                #   timeoutSeconds: 3
+                # securityContext:
+                #   allowPrivilegeEscalation: false
+                #   readOnlyRootFilesystem: true
+                startupProbe:
+                  tcpSocket:
+                    port: 5678
+                  periodSeconds: 3
+                  failureThreshold: 30
+                readinessProbe:
+                  tcpSocket:
+                    port: 5678
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 3
+                livenessProbe:
+                  tcpSocket:
+                    port: 5678
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 3
                 volumeMounts:
                   - name: data
                     mountPath: /home/node
