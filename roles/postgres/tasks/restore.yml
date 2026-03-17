@@ -12,8 +12,8 @@
         storage:
           size: "{{ resources.database.storage }}"
           storageClass: "{{ storage_class.name }}"
-        superuserSecret:
-          name: "{{ database.cluster }}-superuser"
+        # superuserSecret:
+        #   name: "{{ database.cluster }}-superuser"
         bootstrap:
           recovery:
             source: s3-backup
