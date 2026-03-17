@@ -1,34 +1,36 @@
 ---
 - name: Restore backup in a new cluster
-  apiVersion: postgresql.cnpg.io/v1
-  kind: Cluster
-  metadata:
-    name: "{{ database.cluster }}-restore"
-    namespace: "{{ inventory_hostname }}"
-  spec:
-    instances: "{{ resources.database.replicas }}"
-    storage:
-      size: "{{ resources.database.storage }}"
-      storageClass: "{{ storage_class.name }}"
-    superuserSecret:
-      name: "{{ database.cluster }}-superuser"
-    bootstrap:
-      recovery:
-        source: s3-backup
-    externalClusters:
-      - name: s3-backup
-        barmanObjectStore:
-          destinationPath: "s3://{{ secrets.s3.name }}"
-          endpointURL: "https://{{ secrets.s3.host }}"
-          s3Credentials:
-            accessKeyId:
-              name: s3-credentials
-              key: AWS_ACCESS_KEY_ID
-            secretAccessKey:
-              name: s3-credentials
-              key: AWS_SECRET_ACCESS_KEY
-          wal:
-            maxParallel: 8
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      metadata:
+        name: "{{ database.cluster }}-restore"
+        namespace: "{{ inventory_hostname }}"
+      spec:
+        instances: "{{ resources.database.replicas }}"
+        storage:
+          size: "{{ resources.database.storage }}"
+          storageClass: "{{ storage_class.name }}"
+        superuserSecret:
+          name: "{{ database.cluster }}-superuser"
+        bootstrap:
+          recovery:
+            source: s3-backup
+        externalClusters:
+          - name: s3-backup
+            barmanObjectStore:
+              destinationPath: "s3://{{ secrets.s3.name }}"
+              endpointURL: "https://{{ secrets.s3.host }}"
+              s3Credentials:
+                accessKeyId:
+                  name: s3-credentials
+                  key: AWS_ACCESS_KEY_ID
+                secretAccessKey:
+                  name: s3-credentials
+                  key: AWS_SECRET_ACCESS_KEY
+              wal:
+                maxParallel: 8
   tags:
     - never
     - postgres.restore
