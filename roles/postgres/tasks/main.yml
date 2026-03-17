@@ -12,3 +12,10 @@
     apply:
       tags: [postgres.cluster]
   tags: [postgres.cluster]
+
+- name: Restore cluster
+  ansible.builtin.include_tasks:
+    file: restore.yml
+    apply:
+      tags: [postgres.restore]
+  tags: [postgres.restore]
