@@ -45,6 +45,9 @@
       metadata:
         name: "{{ n8n.name }}"
         namespace: "{{ inventory_hostname }}"
+        labels:
+          app.kubernetes.io/name: "{{ n8n.name }}"
+          app.kubernetes.io/component: n8n
       spec:
         replicas: "{{ resources.n8n.replicas }}"
         strategy:
