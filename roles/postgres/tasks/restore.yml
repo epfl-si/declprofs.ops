@@ -7,6 +7,9 @@
       metadata:
         name: "{{ database.cluster }}-restore"
         namespace: "{{ inventory_hostname }}"
+        labels:
+          app.kubernetes.io/name: "{{ app.name }}"
+          app.kubernetes.io/component: database
       spec:
         instances: "{{ resources.database.replicas }}"
         storage:
