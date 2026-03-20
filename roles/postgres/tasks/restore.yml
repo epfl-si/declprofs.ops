@@ -12,6 +12,12 @@
         storage:
           size: "{{ resources.database.storage }}"
           storageClass: "{{ storage_class.name }}"
+        resources:
+          requests:
+            cpu: "{{ resources.database.requests.cpu }}"
+            memory: "{{ resources.database.requests.memory }}"
+          limits:
+            memory: "{{ resources.database.limits.memory }}"
         # superuserSecret:
         #   name: "{{ database.cluster }}-superuser"
         bootstrap:
