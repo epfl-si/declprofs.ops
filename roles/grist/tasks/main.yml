@@ -19,3 +19,29 @@
     apply:
       tags: [grist.web]
   tags: [grist.web]
+
+# - name: Test S3 connection
+#   amazon.aws.s3_bucket_info:
+#     endpoint_url: "https://{{ secrets.s3.host }}"
+#     aws_access_key: "{{ secrets.s3.access_key_id }}"
+#     aws_secret_key: "{{ secrets.s3.access_key_secret }}"
+#     region: "us-east-1"
+#   register: s3_test
+#   tags: [grist.s3]
+
+- name: Test S3 connection with AWS CLI v2
+  command: >
+    /usr/bin/aws s3 ls s3://{{ secrets.s3.name }}
+    --endpoint-url https://{{ secrets.s3.host }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ secrets.s3.access_key_id }}"
+    AWS_SECRET_ACCESS_KEY: "{{ secrets.s3.access_key_secret }}"
+    PYTHONPATH: ""
+  register: s3_list
+  failed_when: s3_list.rc != 0
+  tags: [grist.s3]
+
+- name: Show S3 contents
+  debug:
+    var: s3_list.stdout_lines
+  tags: [grist.s3]
