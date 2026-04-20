@@ -30,7 +30,7 @@ database:
   n8n:
     name: "n8n-db"
     user: "n8n-user"
-  host: "{{ app.name }}-postgres-restore-rw"
+  host: "{{ app.name }}-postgres-rw"
 
 storage_class:
   name: ocs-storagecluster-cephfs
