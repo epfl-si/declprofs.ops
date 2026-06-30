@@ -22,3 +22,9 @@
   roles:
     - n8n
   tags: [n8n]
+ 
+- name: Deploy gotenberg
+  hosts: all
+  roles:
+    - gotenberg
+  tags: [gotenberg]
