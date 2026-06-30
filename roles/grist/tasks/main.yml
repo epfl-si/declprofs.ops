@@ -45,3 +45,10 @@
   debug:
     var: s3_list.stdout_lines
   tags: [grist.s3]
+
+- name: Backup grist databases
+  ansible.builtin.include_tasks:
+    file: backup.yml
+    apply:
+      tags: [grist.backup]
+  tags: [grist.backup]
