@@ -241,6 +241,17 @@
           background-color: #f7f7f7 !important;
           }
 
+          .test-tb-search-wrapper,
+          .test-open-discussion,
+          .test-tb-share {
+          display: none !important;
+          }
+
+          ul[aria-label="liste des utilisateurs actifs"],
+          button[aria-label="Ouvrir le panneau de création"] {
+          display: none !important;
+          }
+
 - name: Create config map conditional-css-js
   kubernetes.core.k8s:
     state: present
@@ -310,3 +321,68 @@
             });
             
           })();
+
+- name: Backup Grist documents to S3
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: batch/v1
+      kind: CronJob
+      metadata:
+        name: "{{ app.name }}-grist-backup"
+        namespace: "{{ inventory_hostname }}"
+      spec:
+        schedule: "0 2 * * *"
+        jobTemplate:
+          spec:
+            template:
+              spec:
+                restartPolicy: OnFailure
+                containers:
+                  - name: backup
+                    image: "quay-its.epfl.ch/svc0041/wp-s3:2026-175"
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        set -euo pipefail
+
+                        DATE=$(date +%F-%H%M)
+                        ARCHIVE="/tmp/grist-docs-${DATE}.tar.gz"
+
+                        echo "Archiving Grist docs..."
+                        tar czf "$ARCHIVE" -C /data docs
+
+                        echo "Uploading to S3..."
+                        aws s3 cp "$ARCHIVE" \
+                          s3://{{ secrets.s3.name }}/grist/grist-docs-${DATE}.tar.gz \
+                          --endpoint-url https://{{ secrets.s3.host }}
+
+                        echo "Backup completed: $ARCHIVE"
+                    resources:
+                      requests:
+                        cpu: "50m"
+                        memory: "128Mi"
+                      limits:
+                        memory: "256Mi"
+                    env:
+                      - name: AWS_ACCESS_KEY_ID
+                        valueFrom:
+                          secretKeyRef:
+                            name: s3-credentials
+                            key: AWS_ACCESS_KEY_ID
+                      - name: AWS_SECRET_ACCESS_KEY
+                        valueFrom:
+                          secretKeyRef:
+                            name: s3-credentials
+                            key: AWS_SECRET_ACCESS_KEY
+                      - name: AWS_DEFAULT_REGION
+                        value: "us-east-1"
+                    volumeMounts:
+                      - name: grist-data
+                        mountPath: /data
+                volumes:
+                  - name: grist-data
+                    persistentVolumeClaim:
+                      claimName: "{{ app.name }}-grist-storage"
+                imagePullSecrets:
+                  - name: "{{ pull_secret_wp_s3 }}"

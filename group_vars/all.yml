@@ -14,6 +14,9 @@ n8n:
 registry: quay-its.epfl.ch/svc0723
 pull_secret: svc0723-pull-secret
 
+registry_wp_s3: quay-its.epfl.ch/svc0041
+pull_secret_wp_s3: svc0041-w3-s3-pull-secret
+
 images:
   grist:
     version: "1.7.10"
