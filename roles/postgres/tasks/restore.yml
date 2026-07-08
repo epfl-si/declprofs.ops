@@ -77,6 +77,3 @@
               superuser: false
               passwordSecret:
                 name: "{{ n8n.name }}-db-credentials"
-  tags:
-    - never
-    - postgres.restore

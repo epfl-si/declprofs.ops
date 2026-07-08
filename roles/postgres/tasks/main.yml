@@ -17,5 +17,5 @@
   ansible.builtin.include_tasks:
     file: restore.yml
     apply:
-      tags: [postgres.restore]
-  tags: [postgres.restore]
+      tags: [never, postgres.restore]
+  tags: [never, postgres.restore]
