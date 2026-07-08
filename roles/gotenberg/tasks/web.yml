@@ -34,7 +34,7 @@
           app.kubernetes.io/component: web
           app.kubernetes.io/part-of: "{{ app.name }}"
       spec:
-        replicas: 1
+        replicas: "{{ resources.gotenberg.replicas }}"
         strategy:
           type: RollingUpdate
           rollingUpdate:
@@ -69,10 +69,11 @@
                     value: /tmp
                 resources:
                   requests:
-                    cpu: 5m
-                    memory: 128Mi
+                    cpu: "{{ resources.gotenberg.requests.cpu }}"
+                    memory: "{{ resources.gotenberg.requests.memory }}"
                   limits:
-                    memory: 128Mi
+                    cpu: "{{ resources.gotenberg.limits.cpu }}"
+                    memory: "{{ resources.gotenberg.limits.memory }}"
                 readinessProbe:
                   tcpSocket:
                     port: 3000
