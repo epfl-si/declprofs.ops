@@ -11,11 +11,11 @@ resources:
   n8n:
     replicas: 2
     requests:
-      cpu: 50m
-      memory: 256Mi
+      cpu: 100m
+      memory: 512Mi
     limits:
-      cpu: 50m
-      memory: 256Mi
+      cpu: 100m
+      memory: 512Mi
 
   redis:
     storage: 2Gi
