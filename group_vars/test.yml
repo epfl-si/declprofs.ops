@@ -37,8 +37,8 @@ resources:
   gotenberg:
     replicas: 1
     requests:
-      cpu: 5m
-      memory: 256Mi
+      cpu: 100m
+      memory: 512Mi
     limits:
-      cpu: 50m
-      memory: 256Mi
+      cpu: 100m
+      memory: 512Mi
