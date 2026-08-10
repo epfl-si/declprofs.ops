@@ -59,6 +59,5 @@
     apply:
       tags: [grist.restore-from-fake]
   tags: [grist.restore-from-fake]
-  when: env == "prod"
-#  when: env == "test" → currently works only for prod
-#                        look at the script python
+#  when: env == "prod"
+  when: env == "test"

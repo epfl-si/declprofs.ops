@@ -42,3 +42,6 @@ resources:
     limits:
       cpu: 100m
       memory: 512Mi
+
+grist_file: uSQv6iCFFQ8QjLRNJQuJ8c.grist
+grist_fake_file: 7ds2tRWSxstfK3gLp4pxnG.grist

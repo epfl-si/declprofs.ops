@@ -58,10 +58,10 @@
           import sqlite3
           import subprocess
 
-          PROD = "/persist/docs/uSQv6iCFFQ8QjLRNJQuJ8c.grist"
-          FAKE = "/persist/docs/7ds2tRWSxstfK3gLp4pxnG.grist"
+          REAL = "/persist/docs/{{ grist_file }}"
+          FAKE = "/persist/docs/{{ grist_fake_file }}"
 
-          conn = sqlite3.connect(PROD)
+          conn = sqlite3.connect(REAL)
           cursor = conn.cursor()
 
           cursor.execute("ATTACH DATABASE ? AS fake", (FAKE,))
