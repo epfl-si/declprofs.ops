@@ -341,7 +341,7 @@
                   - name: backup
                     image: "quay-its.epfl.ch/svc0041/wp-s3:2026-175"
                     command:
-                      - sh
+                      - bash
                       - -c
                       - |
                         set -euo pipefail
